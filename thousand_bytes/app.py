@@ -2,6 +2,7 @@ from asciimatics.renderers import ImageFile
 from flask import abort
 from flask import Flask
 from flask import jsonify
+from flask import make_response
 from flask import request
 
 
@@ -27,4 +28,6 @@ def convert():
         return response
 
     img = convert_image(f, height)
-    return img
+    response = make_response(img)
+    response.mimetype = 'text/plain'
+    return response
