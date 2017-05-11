@@ -11,7 +11,7 @@ app = Flask(__name__)
 def convert_image(fp, height):
     imgf = ImageFile(fp, height=height)
     img = [i for i in imgf.images][0]
-    img = '\n'.join(line for line in img)
+    img = '\n'.join(line for line in img if line)
     return img
 
 
