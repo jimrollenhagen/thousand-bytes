@@ -15,16 +15,23 @@ def convert_image(fp, height):
     return img
 
 
+def _error(msg):
+    response = jsonify({'error': msg})
+    response.status_code = 400
+    return response
+
+
 @app.route('/ascii', methods=['POST'])
 def convert():
-    f = request.files['file']
+    f = request.files.get('image')
+    if f is None:
+        return _error('must provide image to convert')
+
     height = request.form.get('height', 50)
     try:
         height = int(height)
     except ValueError:
-        response = jsonify({'error': '"height" parameter must be an integer'})
-        response.status_code = 400
-        return response
+        return _error('"height" parameter must be an integer')
 
     img = convert_image(f, height)
     response = make_response(img)
