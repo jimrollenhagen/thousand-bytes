@@ -1,5 +1,4 @@
 from asciimatics.renderers import ImageFile
-from flask import abort
 from flask import Flask
 from flask import jsonify
 from flask import make_response
