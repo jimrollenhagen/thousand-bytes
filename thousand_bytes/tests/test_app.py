@@ -9,7 +9,7 @@ class AppTestCase(unittest.TestCase):
         super(AppTestCase, self).setUp()
         app.config['TESTING'] = True
         self.app = app.test_client()
-        self.img = open('images/safe/world-map.png', 'rb')
+        self.img = open('images/world-map.png', 'rb')
 
     def tearDown(self):
         super(AppTestCase, self).tearDown()
