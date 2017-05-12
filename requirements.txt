@@ -1,2 +1,2 @@
 flask
-asciimatics
+asciimatics<2.0.0
