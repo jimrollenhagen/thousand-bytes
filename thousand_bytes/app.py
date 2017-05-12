@@ -35,7 +35,11 @@ def convert():
     except ValueError:
         return _error('"height" parameter must be a positive integer')
 
-    img = convert_image(f, height)
+    try:
+        img = convert_image(f, height)
+    except IOError:
+        return _error('invalid image')
+
     response = make_response(img)
     response.mimetype = 'text/plain'
     return response

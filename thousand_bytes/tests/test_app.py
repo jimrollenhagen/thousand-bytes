@@ -26,6 +26,15 @@ class AppTestCase(unittest.TestCase):
         self.assertIn('error', data)
         self.assertEqual('must provide image to convert', data['error'])
 
+    def test_convert_bad_image(self):
+        with open('README.rst', 'rb') as f:
+            resp = self.app.post('/ascii',
+                                 data={'image': f})
+        data = json.loads(resp.data.decode('utf-8'))
+        self.assertEqual(400, resp.status_code)
+        self.assertIn('error', data)
+        self.assertEqual('invalid image', data['error'])
+
     def test_convert_string_height(self):
         resp = self.app.post('/ascii',
                              data={'height': 'foo', 'image': self.img})
