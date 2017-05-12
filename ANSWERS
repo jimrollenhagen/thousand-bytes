@@ -1,0 +1,41 @@
+How would you measure the performance of your service?
+
+    Measuring the performance of this service is fairly trivial.
+
+    We would begin with adding response times to the web server logs, and
+    aggregating these with a tool like Splunk or a basic ELK stack. For more
+    fine-grained measurement, we could additionally instrument the `convert`
+    and `convert_image` methods in app.py, and aggregate those in the same tool.
+    This would enable us to find where exactly the bottleneck is and target
+    work there. Though, it's fairly obvious here that the bottleneck would
+    be in the conversion process. :)
+
+    We would also measure the size of images being uploaded so that we could
+    correlate image size to response time.
+
+What are some strategies you would employ to make your service more scalable?
+
+    This service is straightforward to scale horizontally behind a load
+    balancer. The only way to reduce the load on the application servers
+    would be to do some sort of asynchronous conversion, which would
+    require storing images (which we'll discuss next).
+
+    That said, response time should scale roughly linearly to image size, based
+    on the algorithm in asciimatics. If we find that large images are eating
+    lots of API workers, we could evaluate the tradeoffs of limiting image
+    size against the usefulness of the service, to cut back on long-running
+    requests.
+
+How would your design change if you needed to store the uploaded images?
+
+    If we needed to store the uploaded images, I would convert the API to an
+    asynchronous model. The conversion request would read the image and pass it
+    off to a worker application for processing, write a record in a database,
+    and return a 202 and a UUID that can be referenced. The API user could then
+    poll for that ID (something like `GET /ascii/<uuid>`) until the storage and
+    conversion is complete. The worker process would store the image in a blob
+    storage service (so that all APIs could access the file), and update the DB
+    record with the location of the image. It would also convert the image to
+    ascii art and store the ascii art in the same way. When the conversion is
+    complete, a GET request for the resource would return URLs to the image and
+    the ascii art, and the user could then go request those as needed.
