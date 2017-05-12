@@ -26,13 +26,31 @@ class AppTestCase(unittest.TestCase):
         self.assertIn('error', data)
         self.assertEqual('must provide image to convert', data['error'])
 
-    def test_convert_invalid_height(self):
+    def test_convert_string_height(self):
         resp = self.app.post('/ascii',
                              data={'height': 'foo', 'image': self.img})
         data = json.loads(resp.data.decode('utf-8'))
         self.assertEqual(400, resp.status_code)
         self.assertIn('error', data)
-        self.assertEqual('"height" parameter must be an integer',
+        self.assertEqual('"height" parameter must be a positive integer',
+                         data['error'])
+
+    def test_convert_negative_height(self):
+        resp = self.app.post('/ascii',
+                             data={'height': '-1', 'image': self.img})
+        data = json.loads(resp.data.decode('utf-8'))
+        self.assertEqual(400, resp.status_code)
+        self.assertIn('error', data)
+        self.assertEqual('"height" parameter must be a positive integer',
+                         data['error'])
+
+    def test_convert_zero_height(self):
+        resp = self.app.post('/ascii',
+                             data={'height': '0', 'image': self.img})
+        data = json.loads(resp.data.decode('utf-8'))
+        self.assertEqual(400, resp.status_code)
+        self.assertIn('error', data)
+        self.assertEqual('"height" parameter must be a positive integer',
                          data['error'])
 
     def test_convert_with_height(self):

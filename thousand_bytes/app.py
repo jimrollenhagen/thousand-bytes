@@ -30,8 +30,10 @@ def convert():
     height = request.form.get('height', 50)
     try:
         height = int(height)
+        if height <= 0:
+            raise ValueError
     except ValueError:
-        return _error('"height" parameter must be an integer')
+        return _error('"height" parameter must be a positive integer')
 
     img = convert_image(f, height)
     response = make_response(img)
